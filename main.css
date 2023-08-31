@@ -1,0 +1,752 @@
+/******************************************************************************/
+/* Page: main.html                                                            */
+/* Description: This is the main page for score entry, including entry        */
+/*              validation, End Confirmation sheet and Final Summary sheet    */
+/*              sheet and Final Summary sheet                                 */
+/* Version History: 0.1 - Score Entry Only                                    */
+/*                  0.2 - End Confirmation and local Storage supoort          */                       
+/*                  0.3 - Layout refined, main container in column-reverse    */
+/*                        flex box, prepare for ad-slot                       */
+/*                  0.4 - Entry Validation and Final Summary Sheet            */
+/******************************************************************************/
+
+
+/**********************************************/
+/* Define Global variables and class settings */
+/**********************************************/
+:root {
+  /* Color Variables */
+  --color-home: rgb(43, 96, 255);
+  --color-away: rgb(255, 43, 43);
+  --color-tie: rgb(156, 33, 156);
+  --color-glass: rgba(225, 225, 225, 0.18);
+  --side-color: rgb(255, 255, 255);
+
+  /* Shadow Variables */
+  --shadow_light: 0 0.125rem 0.125rem rgba(0, 0, 0, 0.36);
+  --shadow_regular: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.36);
+  --shadow_heavy: 0 0.5rem 0.5rem rgba(15, 20, 72, 0.36);
+
+  /* Default Font */
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+  color: white;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/*----------------------*/
+/* Global Class Setting */
+/*----------------------*/
+/* State */
+/* .shown {
+  display: block;
+}
+.visually-shown {
+  opacity: 100;
+} */
+
+/* Glass in white */
+.glass_white {
+  background: rgba(225, 225, 225, 0.12);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Glass in gray */
+.glass_gray {
+  background: rgba(24, 24, 24, 0.85);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Glass Effect/Regular */
+.glass_regular {
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25),
+    0px 1px 2px 0px rgba(255, 255, 255, 0.32) inset;
+  backdrop-filter: blur(4px);
+}
+
+/* Extra Large Score */
+.score_600 {
+  font-family: "Mogra", cursive;
+  font-size: 6rem;
+  letter-spacing: -0.1rem;
+  line-height: 1;
+  text-shadow: var(--shadow_heavy);
+}
+
+.score_500 {
+  font-family: "Mogra", cursive;
+  font-size: 5rem;
+  letter-spacing: -0.1rem;
+  line-height: 1;
+  text-shadow: var(--shadow_heavy);
+}
+
+/* Large Score */
+.score_450 {
+  font-family: "Mogra", cursive;
+  font-size: 4.5rem;
+  letter-spacing: -0.1rem;
+  line-height: 1;
+  text-shadow: var(--shadow_heavy);
+}
+
+/* Regular score */
+.score_250 {
+  font-family: "Mogra", cursive;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.125rem;
+  text-shadow: var(--shadow_regular);
+}
+
+/* Small Score */
+.score_200 {
+  font-family: "Mogra", cursive;
+  font-size: 2rem;
+  letter-spacing: 0;
+  text-shadow: var(--shadow_regular);
+}
+
+/* Set color for home and away class */
+.home {
+  color: var(--color-home);
+  --button-color: var(--color-home);
+}
+
+.away {
+  color: var(--color-away);
+  --button-color: var(--color-away);
+}
+
+.label {
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+/*--------------------------*/
+/* Navigation Bar and items */
+/*--------------------------*/
+
+/* Navigation Bar */
+.nav-bar {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  flex: 0 1 auto;
+
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 1rem;
+  max-width: 90%;
+  height: 2.5rem;
+
+  border-radius: 1.125rem;
+  border-top: 1px solid var(--glass-edge, rgba(255, 255, 255, 0.24));
+  background: var(--glass-dark-background, rgba(0, 0, 0, 0.1));
+
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+/* Gap property for flex box is not working for older browser,      */
+/* therefore add margin-left for every button which follows another */
+/* button instead of using gap: 0.5rem;                             */
+.nav-bar > button + button {
+  margin-left: 0.5rem;
+}
+
+/* Regular Button */
+.btn_regular {
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 1rem;
+  border: none;
+}
+
+#close-modal:first-child {
+  text-shadow: var(--shadow_light);
+  background: rgba(255, 255, 255, 0.24);
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16);
+}
+
+/* Call-To-Action Button */
+button.cta {
+  display: flex;
+  width: 10rem;
+  height: 2rem;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 1rem;
+  border: 1px solid var(--primary-400, #3dee59);
+  background: rgba(255, 255, 255, 0.32);
+  box-shadow: 0px 0px 10px 0px #42ff20;
+  backdrop-filter: blur(4px);
+
+  color: var(--neutral-white, #fff);
+
+  /* Shadow/Regular */
+  text-shadow: var(--shadow_regular);
+  font-size: 1rem;
+}
+
+/*************************************/
+/* Start of detail style declaration */
+/*************************************/
+
+/* Reset margin of p tag for Safari, don't know why Safari has this setting  */
+p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+img.bg {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+
+  filter: brightness(30%);
+
+  z-index: -2;
+}
+
+.main-container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  display: flex;
+  flex-direction: column-reverse;
+  flex-wrap: nowrap;
+
+  /* background-color: var(--color-glass); */
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+
+  z-index: -1;
+
+  padding-top: 100px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#info {
+  margin-top: -50px;
+}
+
+.score-wrap {
+  display: grid;
+  grid-template-columns: auto auto;
+  place-items: center;
+  margin-bottom: 1rem;
+}
+
+#score-card-btn__icon {
+  width: auto;
+  height: 36px;
+}
+
+#score-card-btn__label {
+  font-size: 1rem;
+}
+
+#end__count {
+  font-family: "Mogra", cursive;
+  font-size: 5rem;
+  line-height: 1;
+  text-shadow: var(--shadow_heavy);
+  margin-right: 0.5rem;
+}
+
+#end__label {
+  font-size: 2.8rem;
+  font-weight: 900;
+  text-shadow: var(--shadow_heavy);
+}
+
+.input-panel {
+  /* position: absolute; */
+  bottom: 0;
+  /* left: 50%;
+  transform: translateX(-50%); */
+  margin-left: auto;
+  margin-right: auto;
+  width: calc(100% - 2vw);
+
+  min-height: 200px;
+  border-radius: 16px 16px 0 0;
+
+  /* Older browser (Safari 12) does not support padding-inline,  */
+  /* Therefore using padding left and pading right instead.      */
+  padding-top: 0;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-bottom: 4rem;
+}
+
+.input-panel p {
+  line-height: 1.2rem;
+  text-shadow: var(--shadow_regular);
+}
+
+/*---------------*/
+/* Toucher Panel */
+/*---------------*/
+.toucher-container-1 {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-top: -1rem;
+}
+
+.toucher-container-2 {
+  display: flex;
+  flex-flow: row wrap;
+  width: max(120px, 48%);
+}
+
+.toucher-container-3 {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 120px;
+  justify-content: space-around;
+
+  margin-top: 0.5rem;
+}
+
+/* Toucher Button */
+.toucher {
+  position: relative;
+  display: flex;
+  place-items: center;
+
+  width: 2.25rem;
+  height: 2.25rem;
+
+  border-radius: 50%;
+  border: 1px dashed var(--button-color, #fff);
+  background-color: var(--color-glass);
+  box-shadow: 0 8px 8px rgba(26, 31, 88, 0.32);
+
+  transition-property: rotate, background-color, opacity;
+  transition-duration: 500ms;
+  transition-timing-function: ease-in;
+}
+
+.toucher :is(.vertical, .horizontal) {
+  transform-origin: center;
+  transition-duration: 500ms;
+}
+
+.toucher.pressed {
+  background-color: var(--button-color);
+  border: 1px solid var(--button-color);
+}
+
+.toucher.pressed .vertical {
+  rotate: 180deg;
+  fill: var(--button-color);
+}
+
+.toucher.pressed .horizontal {
+  rotate: 180deg;
+  fill: var(--button-color);
+}
+
+.toucher.disabled {
+  pointer-events: none;
+}
+
+.toucher.pressed:not(.disabled)::after {
+  font: var(--fa-font-solid);
+  font-size: 1rem;
+  content: "\f056";
+
+  position: absolute;
+  top: -4px;
+  right: -4px;
+
+  display: grid;
+  justify-content: center;
+
+  color: rgba(225, 225, 225, 0.6);
+}
+
+/*---------------------*/
+/* Winning Shots Panel */
+/*---------------------*/
+.winning-shots {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.8rem;
+}
+
+.winning-shot {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.shot-label {
+  display: flex;
+  align-items: center;
+  text-shadow: var(--shadow_regular);
+}
+
+.warning::after {
+  display: inline-block;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  
+  content: "\f06a";
+  font: var(--fa-font-solid);
+  font-size:  1rem;
+  color: yellow;
+  margin-inline-start: 0.5rem;
+}
+
+/* Side Button */
+.side-btn__container {
+  background-color: rgba(0, 0, 0, 0.16);
+  width: calc(12rem + 4px); /* button width + padding */
+  height: calc(1.5rem + 4px);
+  border-radius: calc(0.75rem + 4px); /* which is height divided by 2*/
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  place-items: center;
+  padding-left: 2px; /* not using padding-inline to support older browser */
+  padding-right: 2px;
+}
+
+.home-btn {
+  width: 4rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
+
+  display: flex;
+  place-items: center;
+  box-sizing: content-box;
+
+  --side-color: var(--color-home);
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+.tie-btn {
+  width: 4rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
+
+  display: flex;
+  place-items: center;
+  box-sizing: content-box;
+
+  --side-color: var(--color-tie);
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+.away-btn {
+  width: 4rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
+
+  display: flex;
+  /* place-items: center; */
+  box-sizing: content-box;
+
+  --side-color: var(--color-away);
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+.side-btn__wrap {
+  width: 4rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
+
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.side-btn__label {
+  text-shadow: var(--shadow_light);
+  font-family: Inter;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.side-btn_pressed .side-btn__wrap {
+  background-color: var(--side-color);
+  box-shadow: var(--shadow_light);
+}
+
+/***************************/
+/* End Result Confirmation */
+/***************************/
+#modal {
+  display: none;
+  position: fixed;
+  top: var(--content-top);
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+
+  transition-property: opacity;
+  transition-duration: 2000ms;
+  transition-timing-function: ease;
+}
+
+.modal__header {
+  text-align: center;
+  font-size: 2rem;
+  text-shadow: var(--shadow_heavy);
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+#modal__container {
+  display: grid;
+  grid-template-rows: repeat(5, 3rem) 4rem;
+  grid-template-columns: 1fr 1.5fr 1fr;
+
+  justify-content: space-between;
+  align-items: center;
+  row-gap: 0;
+  column-gap: 1rem;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-block: 0;
+}
+
+#modal__container * {
+  text-shadow: var(--shadow_regular);
+  line-height: 1.2;
+}
+
+#home-label {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  justify-self: center;
+}
+
+#away-label {
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+  justify-self: center;
+}
+
+#touchers__label {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  justify-self: center;
+}
+
+#touchers__home {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+  justify-self: center;
+}
+
+#touchers__away {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3;
+  justify-self: center;
+}
+
+#first-shot__label {
+  grid-column: 2 / 3;
+  grid-row: 3 / 4;
+  justify-self: center;
+}
+
+#first-shot__home {
+  grid-column: 1 / 2;
+  grid-row: 3 / 4;
+  justify-self: center;
+}
+
+#first-shot__away {
+  grid-column: 3 / 4;
+  grid-row: 3 / 4;
+  justify-self: center;
+}
+
+#second-shot__label {
+  grid-column: 2 / 3;
+  grid-row: 4 / 5;
+  justify-self: center;
+}
+
+#second-shot__home {
+  grid-column: 1 / 2;
+  grid-row: 4 / 5;
+  justify-self: center;
+}
+
+#second-shot__away {
+  grid-column: 3 / 4;
+  grid-row: 4 / 5;
+  justify-self: center;
+}
+
+#third-shot__label {
+  grid-column: 2 / 3;
+  grid-row: 5 / 6;
+  justify-self: center;
+}
+
+#third-shot__home {
+  grid-column: 1 / 2;
+  grid-row: 5 / 6;
+  justify-self: center;
+}
+
+#third-shot__away {
+  grid-column: 3 / 4;
+  grid-row: 5 / 6;
+  justify-self: center;
+}
+
+#total__label {
+  grid-column: 2 / 3;
+  grid-row: 6 / 7;
+  justify-self: center;
+
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+#total__home {
+  grid-column: 1 / 2;
+  grid-row: 6 / 7;
+  justify-self: center;
+}
+
+#total__away {
+  grid-column: 3 / 4;
+  grid-row: 6 / 7;
+  justify-self: center;
+}
+
+/*********************/
+/* Final Score Sheet */
+/*********************/
+#final__wrap {
+  grid-column: 1 / 4;
+  grid-row: 1 / 2;
+  justify-self: stretch;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  column-gap: 1rem;
+  place-items: center;
+}
+
+#home-label-2 {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3 ;
+  justify-self: center;
+}
+
+#away-label-2 {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3 ;
+  justify-self: center;
+}
+
+#total-touchers__label {
+  grid-column: 2 / 3;
+  grid-row: 3 / 4;
+  justify-self: center;
+}
+
+#total-touchers__home {
+  grid-column: 1 / 2;
+  grid-row: 3 / 4;
+  justify-self: center;
+}
+
+#total-touchers__away {
+  grid-column: 3 / 4;
+  grid-row: 3 / 4;
+  justify-self: center;
+}
+
+#highest-end__label {
+  grid-column: 2 / 3;
+  grid-row: 4 / 5;
+  justify-self: center;
+}
+
+#highest-end__home {
+  grid-column: 1 / 2;
+  grid-row: 4 / 5;
+  justify-self: center;
+}
+
+#highest-end__away {
+  grid-column: 3 / 4;
+  grid-row: 4 / 5;
+  justify-self: center;
+}
+
+#score-card-row {
+  grid-column: 2 / 3;
+  grid-row: 5 / 6;
+  justify-self: center;
+}
+
+
+
+
+/* Media Query */
+@media screen and (max-width: 320px), screen and (max-height: 480px) {
+  :root {
+    font-size: 12px;
+  }
+
+  .main-container {
+    padding-top: 50px;
+  }
+}
+
+.shown {
+  display: block;
+}
+.visually-shown {
+  opacity: 1;
+}
