@@ -11,70 +11,6 @@
 /******************************************************************************/
 
 
-/**********************************************/
-/* Define Global variables and class settings */
-/**********************************************/
-:root {
-  /* Color Variables */
-  --color-home: rgb(43, 96, 255);
-  --color-away: rgb(255, 43, 43);
-  --color-tie: rgb(156, 33, 156);
-  --color-glass: rgba(225, 225, 225, 0.18);
-  --side-color: rgb(255, 255, 255);
-
-  /* Shadow Variables */
-  --shadow_light: 0 0.125rem 0.125rem rgba(0, 0, 0, 0.36);
-  --shadow_regular: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.36);
-  --shadow_heavy: 0 0.5rem 0.5rem rgba(15, 20, 72, 0.36);
-
-  /* Default Font */
-  font-size: 16px;
-  font-family: "Inter", sans-serif;
-  color: white;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-/*----------------------*/
-/* Global Class Setting */
-/*----------------------*/
-/* State */
-/* .shown {
-  display: block;
-}
-.visually-shown {
-  opacity: 100;
-} */
-
-/* Glass in white */
-.glass_white {
-  background: rgba(225, 225, 225, 0.12);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-/* Glass in gray */
-.glass_gray {
-  background: rgba(24, 24, 24, 0.85);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-/* Glass Effect/Regular */
-.glass_regular {
-  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25),
-    0px 1px 2px 0px rgba(255, 255, 255, 0.32) inset;
-  backdrop-filter: blur(4px);
-}
-
 /* Extra Large Score */
 .score_600 {
   font-family: "Mogra", cursive;
@@ -134,52 +70,10 @@
   text-align: center;
 }
 
-/*--------------------------*/
-/* Navigation Bar and items */
-/*--------------------------*/
-
-/* Navigation Bar */
-.nav-bar {
-  position: absolute;
-  display: flex;
-  flex-direction: row;
-  flex: 0 1 auto;
-
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 1rem;
-  max-width: 90%;
-  height: 2.5rem;
-
-  border-radius: 1.125rem;
-  border-top: 1px solid var(--glass-edge, rgba(255, 255, 255, 0.24));
-  background: var(--glass-dark-background, rgba(0, 0, 0, 0.1));
-
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-}
-
-/* Gap property for flex box is not working for older browser,      */
-/* therefore add margin-left for every button which follows another */
-/* button instead of using gap: 0.5rem;                             */
-.nav-bar > button + button {
-  margin-left: 0.5rem;
-}
-
-/* Regular Button */
-.btn_regular {
-  display: flex;
-  width: 2rem;
-  height: 2rem;
-  justify-content: center;
-  align-items: center;
-
-  border-radius: 1rem;
-  border: none;
-}
-
+/*
+/**************************/
+/* Navigation Bar Buttons */
+/**************************/
 #close-modal:first-child {
   text-shadow: var(--shadow_light);
   background: rgba(255, 255, 255, 0.24);
@@ -211,26 +105,7 @@ button.cta {
 /* Start of detail style declaration */
 /*************************************/
 
-/* Reset margin of p tag for Safari, don't know why Safari has this setting  */
-p {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-img.bg {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-
-  filter: brightness(30%);
-
-  z-index: -2;
-}
-
-.main-container {
+#main-container {
   position: fixed;
   left: 0;
   right: 0;
@@ -258,18 +133,25 @@ img.bg {
 
 .score-wrap {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-rows: min-content, min-content;
+  grid-template-columns: 1fr 1fr;
   place-items: center;
-  margin-bottom: 1rem;
 }
 
-#score-card-btn__icon {
-  width: auto;
-  height: 36px;
+#score-card-btn__wrap {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+#score-card-btn__icon > img {
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
 }
 
 #score-card-btn__label {
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 #end__count {
@@ -287,10 +169,7 @@ img.bg {
 }
 
 .input-panel {
-  /* position: absolute; */
   bottom: 0;
-  /* left: 50%;
-  transform: translateX(-50%); */
   margin-left: auto;
   margin-right: auto;
   width: calc(100% - 2vw);
@@ -311,9 +190,9 @@ img.bg {
   text-shadow: var(--shadow_regular);
 }
 
-/*---------------*/
-/* Toucher Panel */
-/*---------------*/
+/*---------------------------------------------*/
+/* Toucher Panel                               */
+/*---------------------------------------------*/
 .toucher-container-1 {
   display: flex;
   flex-direction: row;
@@ -394,9 +273,9 @@ img.bg {
   color: rgba(225, 225, 225, 0.6);
 }
 
-/*---------------------*/
-/* Winning Shots Panel */
-/*---------------------*/
+/*---------------------------------------------*/
+/* Winning Shots Panel                         */
+/*---------------------------------------------*/
 .winning-shots {
   display: flex;
   flex-direction: column;
@@ -511,9 +390,9 @@ img.bg {
   box-shadow: var(--shadow_light);
 }
 
-/***************************/
-/* End Result Confirmation */
-/***************************/
+/*---------------------------------------------*/
+/* End Result Confirmation                     */
+/*---------------------------------------------*/
 #modal {
   display: none;
   position: fixed;
@@ -522,6 +401,7 @@ img.bg {
   right: 1rem;
   bottom: 1rem;
   z-index: 10;
+  border-radius: 1rem;
 
   transition-property: opacity;
   transition-duration: 2000ms;
@@ -661,9 +541,9 @@ img.bg {
   justify-self: center;
 }
 
-/*********************/
-/* Final Score Sheet */
-/*********************/
+/*---------------------------------------------*/
+/* Final Score Sheet                           */
+/*---------------------------------------------*/
 #final__wrap {
   grid-column: 1 / 4;
   grid-row: 1 / 2;
@@ -728,25 +608,36 @@ img.bg {
   grid-column: 2 / 3;
   grid-row: 5 / 6;
   justify-self: center;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
 }
 
+#score-card-btn__icon {
+  margin-right: 0.5rem;
+  height: 80%;
+}
 
+#score-card-btn__icon > img {
+  width: 2rem;
+  aspect-ratio:  3 / 4;
+  object-fit: cover;
+}
 
+#score-card-btn__label {
+  align-self: start;
+}
 
-/* Media Query */
+/*---------------------------------------------*/
+/* Media Query                                 */
+/*---------------------------------------------*/
 @media screen and (max-width: 320px), screen and (max-height: 480px) {
   :root {
     font-size: 12px;
   }
 
-  .main-container {
+  #main-container {
     padding-top: 50px;
   }
-}
-
-.shown {
-  display: block;
-}
-.visually-shown {
-  opacity: 1;
 }

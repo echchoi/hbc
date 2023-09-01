@@ -1,0 +1,144 @@
+/*---------------------------------------------*/
+/* Define Global variables and class settings  */
+/*---------------------------------------------*/
+:root {
+  /* Color Variables */
+  --color-home: rgb(43, 96, 255);
+  --color-away: rgb(255, 43, 43);
+  --color-tie: rgb(156, 33, 156);
+  --color-glass: rgba(225, 225, 225, 0.18);
+  --side-color: rgb(255, 255, 255);
+
+  /* Shadow Variables */
+  --shadow_light: 0 0.125rem 0.125rem rgba(0, 0, 0, 0.36);
+  --shadow_regular: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.36);
+  --shadow_heavy: 0 0.5rem 0.5rem rgba(15, 20, 72, 0.36);
+
+  /* Default Font */
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+  color: white;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/*---------------------------------------------*/
+/* Global Class Setting                        */
+/*---------------------------------------------*/
+
+/* Glass in white */
+.glass_white {
+  background: rgba(225, 225, 225, 0.12);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Glass in gray */
+.glass_gray {
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Glass in dark gray */
+.glass_dark-gray {
+  background: rgba(0, 0, 0, 0.75);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Glass Effect/Regular */
+.glass_regular {
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25),
+    0px 1px 2px 0px rgba(255, 255, 255, 0.32) inset;
+  backdrop-filter: blur(4px);
+}
+
+/*
+/*---------------------------------------------*/
+/* Background Image                            */
+/*---------------------------------------------*/
+#bg {
+  position: fixed;
+  min-width: 100%;
+  min-height: 100svh;
+  object-fit: cover;
+
+  filter: brightness(80%);
+
+  z-index: -10;
+}
+
+/*
+/*----------------*/
+/* Navigation Bar */
+/*----------------*/
+.nav-bar {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  flex: 0 1 auto;
+
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 1rem;
+  max-width: 90%;
+  height: 2.5rem;
+
+  border-radius: 1.125rem;
+  border-top: 1px solid var(--glass-edge, rgba(255, 255, 255, 0.24));
+  background: var(--glass-dark-background, rgba(0, 0, 0, 0.1));
+
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+/* Gap property for flex box is not working for older browser,      */
+/* therefore add margin-left for every button which follows another */
+/* button instead of using gap: 0.5rem;                             */
+.nav-bar > button + button {
+  margin-left: 0.5rem;
+}
+
+/* Call-To-Action Button */
+button.cta {
+  display: flex;
+  width: 10rem;
+  height: 2rem;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 1rem;
+  border: 1px solid var(--primary-400, #3dee59);
+  background: rgba(255, 255, 255, 0.32);
+  box-shadow: 0px 0px 10px 0px #42ff20;
+  backdrop-filter: blur(4px);
+
+  color: var(--neutral-white, #fff);
+
+  /* Shadow/Regular */
+  text-shadow: var(--shadow_regular);
+  font-size: 1rem;
+}
+
+/* Regular Button */
+button.regular {
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 1rem;
+  border: none;
+}

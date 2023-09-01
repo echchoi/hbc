@@ -6,7 +6,10 @@
     <title>Score Card v0.2</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Styles -->
     <link rel="stylesheet" href="styles/normalize.css" />
+    <link rel="stylesheet" href="styles/global.css" />
     <link rel="stylesheet" href="styles/scorecard.css" />
 
     <!-- Font -->
@@ -37,7 +40,7 @@
   </head>
 
   <body>
-    <img src="./assets/images/game-lawn-bowls.jpg" alt="" class="bg" />
+    <img id="bg" src="resources/images/game-lawn-bowls.jpg" alt="" />
     <!-- Google Ad Sense Block -->
     <div id="ad-block">
       <!-- <script
@@ -64,7 +67,7 @@
       </script> -->
     </div>
 
-    <div id="glass"></div>
+    <div id="glass" class="glass_gray"></div>
 
     <!-- Main Content -->
     <main id="main">
@@ -73,8 +76,12 @@
       <h3 class="header">AWAY</h3>
     </main>
 
-    <div id="close-btn__wrap">
-      <div id="close-btn__sign" class="fa-solid fa-xmark fa-lg" style="color: #ffffff;"></div>
+    <div class="nav-bar">
+      <div
+        id="close-btn"
+        class="fa-solid fa-xmark fa-lg"
+        style="color: #ffffff"
+      ></div>
     </div>
   </body>
 </html>

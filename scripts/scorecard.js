@@ -29,7 +29,7 @@ window.addEventListener("pageshow", getResult);
 // }
 
 // Close Button
-const closeBtn = document.getElementById("close-btn__wrap");
+const closeBtn = document.getElementById("close-btn");
 closeBtn.addEventListener("click", () => {
   window.close();
 });
@@ -98,13 +98,13 @@ function getResult() {
       divHeader.classList.add("end-header");
       let rowContent = `
         <p id="chevron" class="fa fa-chevron-down fa-lg" style="color: #ffffff;" aria-hidden="true"></p>
-        <p class="score_regular neutral">${endResult.end.toString()}</p>
+        <p class="score_200 neutral">${endResult.end.toString()}</p>
         <p></p>       
-        <p class="score_regular home">${endResult.homeScore.toString()}</p>
-        <p class="score_regular home">${aggHomeScore.toString()}</p>
+        <p class="score_200 home">${endResult.homeScore.toString()}</p>
+        <p class="score_200 home">${aggHomeScore.toString()}</p>
         <p></p>
-        <p class="score_regular away">${endResult.awayScore.toString()}</p>
-        <p class="score_regular away">${aggAwayScore.toString()}</p>
+        <p class="score_200 away">${endResult.awayScore.toString()}</p>
+        <p class="score_200 away">${aggAwayScore.toString()}</p>
       `;
       divHeader.innerHTML = rowContent;
       divHeader.addEventListener("click", expandRow);
@@ -138,18 +138,18 @@ function getResult() {
       let divDetails = document.createElement("div");
       divDetails.classList.add("end-details");
       let detailContent = `
-        <p class="score_small home">${homeToucherScore.toString()}</p>
+        <p class="score_160 home">${homeToucherScore.toString()}</p>
         <p class="tag_small neutral">Touchers</p>
-        <p class="score_small away">${awayToucherScore.toString()}</p>
-        <p class="score_small home">${winningShots[0][0].toString()}</p>
+        <p class="score_160 away">${awayToucherScore.toString()}</p>
+        <p class="score_160 home">${winningShots[0][0].toString()}</p>
         <p class="tag_small neutral">1st Shot</p>
-        <p class="score_small away">${winningShots[0][1].toString()}</p>
-        <p class="score_small home">${winningShots[1][0].toString()}</p>
+        <p class="score_160 away">${winningShots[0][1].toString()}</p>
+        <p class="score_160 home">${winningShots[1][0].toString()}</p>
         <p class="tag_small neutral">2nd Shot</p>
-        <p class="score_small away">${winningShots[1][1].toString()}</p>
-        <p class="score_small home">${winningShots[2][0].toString()}</p>
+        <p class="score_160 away">${winningShots[1][1].toString()}</p>
+        <p class="score_160 home">${winningShots[2][0].toString()}</p>
         <p class="tag_small neutral">3rd Shot</p>
-        <p class="score_small away">${winningShots[2][1].toString()}</p>
+        <p class="score_160 away">${winningShots[2][1].toString()}</p>
       `;
       divDetails.innerHTML = detailContent;
       divRow.appendChild(divDetails);

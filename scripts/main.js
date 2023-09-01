@@ -33,10 +33,79 @@ let mainTop = document
 document.documentElement.style.setProperty("--content-top", `${mainTop}px`);
 
 //
+// -----------------------------------------------------
+// Link UI Elements and add event listeners
+// -----------------------------------------------------
+
+// -- Scores --
+let homeScoreLabel = document.querySelector("#home-score");
+let awayScoreLabel = document.querySelector("#away-score");
+
+// -- Score Card Button --
+let scoreCardBtn = document.getElementById("score-card-btn__wrap");
+scoreCardBtn.addEventListener("click", goScoreCardPage);
+
+// -- End --
+let endLabel = document.getElementById("end__count");
+
+// -- Toucher Buttons --
+// Home Touchers
+let homeToucherBtn = document.querySelectorAll(".toucher.home");
+for (let i = 0; i < homeToucherBtn.length; i++) {
+  homeToucherBtn[i].addEventListener("click", toggleToucher);
+  if (i > 0) {
+    homeToucherBtn[i].style.visibility = "hidden";
+    homeToucherBtn[i].style.opacity = "0";
+  }
+}
+
+// Away Touchers
+let awayToucherBtn = document.querySelectorAll(".toucher.away");
+for (let i = 0; i < awayToucherBtn.length; i++) {
+  awayToucherBtn[i].addEventListener("click", toggleToucher);
+  if (i > 0) {
+    awayToucherBtn[i].style.visibility = "hidden";
+    awayToucherBtn[i].style.opacity = "0";
+  }
+}
+
+// -- Shot Labels --
+let shotLabels = document.getElementsByClassName("shot-label");
+
+// -- Side Buttons --
+let sideBtns = document.querySelectorAll(".side-btn");
+for (let i = 0; i < sideBtns.length; i++) {
+  sideBtns[i].addEventListener("click", toggleSide);
+}
+
+// -- Navigation Buttons on Main Page --
+let nextBtn = document.querySelector("#next-end");
+// nextBtn.addEventListener("click", showResult);
+nextBtn.addEventListener("click", inputCheck); // working
+
+// -- Modal Sheet --
+let modalSheet = document.getElementById("modal");
+
+// -- Navigation Buttons on Modal Sheet --
+// Confirm End Button
+let confirmEndBtn = document.getElementById("confirm-end");
+confirmEndBtn.addEventListener("click", confirmEnd);
+
+// Back Button
+let closeModal = document.getElementById("close-modal");
+closeModal.addEventListener("click", closeModalSheet);
+
+//
 // ------------------------------------------------
-// Check Local Storage for saved state when loaded
+// When Document Object Model (DOM) loaded
 // ------------------------------------------------
-window.onload = () => {
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Document fully loaded and parsed");
+
+  //
+  // ----------------------------------------------
+  // Check Local Storage for saved state
+  // ----------------------------------------------
   //
   // Check whether there is previous end scores
   if (localStorage) {
@@ -88,70 +157,7 @@ window.onload = () => {
   document.getElementById(
     "info"
   ).innerHTML += `width: ${width}, height: ${height}`;
-};
-
-//
-// -----------------------------------------------------
-// Link screen items and add event listener to buttons
-// -----------------------------------------------------
-
-// -- Scores --
-let homeScoreLabel = document.querySelector("#home-score");
-let awayScoreLabel = document.querySelector("#away-score");
-
-// -- Score Card Button --
-let scoreCardBtn = document.getElementsByClassName("score-card-btn__wrap");
-scoreCardBtn[0].addEventListener("click", goScoreCardPage);
-
-// -- End --
-let endLabel = document.getElementById("end__count");
-
-// -- Toucher Buttons --
-// Home Touchers
-let homeToucherBtn = document.querySelectorAll(".toucher.home");
-for (let i = 0; i < homeToucherBtn.length; i++) {
-  homeToucherBtn[i].addEventListener("click", toggleToucher);
-  if (i > 0) {
-    homeToucherBtn[i].style.visibility = "hidden";
-    homeToucherBtn[i].style.opacity = "0";
-  }
-}
-
-// Away Touchers
-let awayToucherBtn = document.querySelectorAll(".toucher.away");
-for (let i = 0; i < awayToucherBtn.length; i++) {
-  awayToucherBtn[i].addEventListener("click", toggleToucher);
-  if (i > 0) {
-    awayToucherBtn[i].style.visibility = "hidden";
-    awayToucherBtn[i].style.opacity = "0";
-  }
-}
-
-// -- Shot Labels --
-let shotLabels = document.getElementsByClassName("shot-label");
-
-// -- Side Buttons --
-let sideBtns = document.querySelectorAll(".side-btn");
-for (let i = 0; i < sideBtns.length; i++) {
-  sideBtns[i].addEventListener("click", toggleSide);
-}
-
-// -- Navigation Buttons on Main Page --
-let nextBtn = document.querySelector("#next-end");
-// nextBtn.addEventListener("click", showResult);
-nextBtn.addEventListener("click", inputCheck); // working
-
-// -- Modal Sheet --
-let modalSheet = document.getElementById("modal");
-
-// -- Navigation Buttons on Modal Sheet --
-// Confirm End Button
-let confirmEndBtn = document.getElementById("confirm-end");
-confirmEndBtn.addEventListener("click", confirmEnd);
-
-// Back Button
-let closeModal = document.getElementById("close-modal");
-closeModal.addEventListener("click", closeModalSheet);
+});
 
 //
 // ----------------------------------------------------------------------
@@ -685,6 +691,7 @@ function closeModalSheet() {
 // Description: Build the Final Score Sheet to wrap up the game
 // ----------------------------------------------------------------------
 function gameWrapUp() {
+  // Count total touchers for both teams
   let totalTouchersHome = endResults.reduce((runningTotal, er) => {
     return runningTotal + er.noOfHomeTouchers;
   }, 0);
@@ -693,9 +700,15 @@ function gameWrapUp() {
     return runningTotal + er.noOfAwayTouchers;
   }, 0);
 
-  // Debug
-  console.log(totalTouchersHome);
-  console.log(totalTouchersAway);
+  // Count highest end score for both teams
+  let highestEndScoreHome = endResults.reduce(
+    (highest, end) => Math.max(highest, end.homeScore),
+    0
+  );
+  let highestEndScoreAway = endResults.reduce(
+    (highest, end) => Math.max(highest, end.awayScore),
+    0
+  );
 
   // Build Modal Header
   let modalHeader = document.getElementById("modal__header");
@@ -704,25 +717,25 @@ function gameWrapUp() {
   // Build Modal Container
   let finalSummary = `
         <div id="final__wrap">
-          <p id="final__home" class="score_500 home">${runningHomeScore}</p>
-          <p id="final__away" class="score_500 away">${runningAwayScore}</p>
+          <div id="final__home" class="score_500 home">${runningHomeScore}</div>
+          <div id="final__away" class="score_500 away">${runningAwayScore}</div>
         </div>
-        <p id="home-label-2" class="label">HOME</p>
-        <p id="away-label-2" class="label">AWAY</p>
-        <p id="total-touchers__label" class="label">Total Touchers</p>
-        <p id="total-touchers__home" class="score_250 home">${totalTouchersHome}</p>
-        <p id="total-touchers__away" class="score_250 away">${totalTouchersAway}</p>
-        <p id="highest-end__label" class="label">Highest End</p>
-        <p id="highest-end__home" class="score_250 home">0</p>
-        <p id="highest-end__away" class="score_250 away">0</p>
-        <p id="score-card-row" class="score-card-btn__wrap">
-          <img
-            src="./assets/images/score-card-icon.png"
-            alt="score card icon"
-            id="score-card-btn__icon"
-          />
-          <span id="score-card-btn__label">Score Card</span>
-        </p>
+        <div id="home-label-2" class="label">HOME</div>
+        <div id="away-label-2" class="label">AWAY</div>
+        <div id="total-touchers__label" class="label">Total Touchers</div>
+        <div id="total-touchers__home" class="score_250 home">${totalTouchersHome}</div>
+        <div id="total-touchers__away" class="score_250 away">${totalTouchersAway}</div>
+        <div id="highest-end__label" class="label">Highest End</div>
+        <div id="highest-end__home" class="score_250 home">${highestEndScoreHome}</div>
+        <div id="highest-end__away" class="score_250 away">${highestEndScoreAway}</div>
+        <div id="score-card-row" class="score-card-btn__wradiv">
+          <div id="score-card-btn__icon"> 
+            <img src="./resources/images/score-card-icon.png" alt="score card icon" />
+          </div>
+          <div id="score-card-btn__label">
+            <p>Score Card</p>
+          </div>
+        </div>
       `;
 
   let modalContainer = document.getElementById("modal__container");
@@ -750,15 +763,20 @@ function gameWrapUp() {
 // Description: Clean up local Storage and session Storage, go back to index page
 // --------------------------------------------------------------------------------
 function gameOver() {
-  window.confirm("Sure to finish Game? All scores will be erased");
+  //
+  // Double confirm with user to end the game
+  const yes = window.confirm("Sure to finish Game? All scores will be erased");
 
-  if (localStorage) {
-    localStorage.removeItem("endResults");
+  // If confirmed, clear locage storage and return to home page
+  if (yes) {
+    if (localStorage) {
+      localStorage.removeItem("endResults");
+    }
+
+    if (sessionStorage) {
+      sessionStorage.removeItem("currentEndResult");
+    }
+
+    window.location.assign("index.html");
   }
-
-  if (sessionStorage) {
-    sessionStorage.removeItem("currentEndResult");
-  }
-
-  window.location = window.location;
 }

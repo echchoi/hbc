@@ -4,10 +4,13 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title></title>
+    <title>WeBowl</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Styles -->
     <link rel="stylesheet" href="styles/normalize.css" />
+    <link rel="stylesheet" href="styles/global.css" />
     <link rel="stylesheet" href="styles/main.css" />
 
     <!-- Font -->
@@ -38,9 +41,9 @@
   </head>
 
   <body>
-    <img src="./resources/images/game-lawn-bowls.jpg" alt="" class="bg" />
-    <div class="main-container">
-      <div class="input-panel glass_white">
+    <img id="bg" src="resources/images/game-lawn-bowls.jpg" alt="" />
+    <div id="main-container">
+      <div class="input-panel glass_gray">
         <!-- Touchers -->
         <p>Toucher</p>
         <div class="toucher-container-1">
@@ -368,16 +371,19 @@
         </div>
       </div>
       <div class="score-wrap">
-        <span class="score_600 home" id="home-score">0</span>
-        <span class="score_600 away" id="away-score">0</span>
-        <span class="score-card-btn__wrap">
-          <img
-            src="./assets/images/score-card-icon.png"
-            alt="score card icon"
-            id="score-card-btn__icon"
-          />
-          <span id="score-card-btn__label">Score Card</span>
-        </span>
+        <div class="score_600 home" id="home-score">0</div>
+        <div class="score_600 away" id="away-score">0</div>
+        <div id="score-card-btn__wrap">
+          <div id="score-card-btn__icon">
+            <img
+              src="./resources/images/score-card-icon.png"
+              alt="score card icon"
+            />
+          </div>
+          <div id="score-card-btn__label">
+            <p>Score Card</p>
+          </div>
+        </div>
         <div id="end__wrap">
           <span id="end__count">0</span>
           <span id="end__label">End</span>
@@ -389,7 +395,7 @@
     </div>
 
     <!-- Modal Sheet for Result Confirmation -->
-    <div id="modal" class="modal glass_gray">
+    <div id="modal" class="modal glass_dark-gray">
       <!-- Title -->
       <h3 id="modal__header" class="modal__header">End Result</h3>
 
@@ -416,7 +422,7 @@
 
       <!-- Navigation Bar -->
       <div id="modal__nav-bar" class="nav-bar">
-        <button id="close-modal" class="btn_regular">
+        <button id="close-modal" class="regular">
           <div
             class="fa-solid fa-chevron-left fa-lg"
             style="color: #ffffff"
