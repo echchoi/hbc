@@ -8,8 +8,12 @@ const home = 0;
 const tie = 1;
 const away = 2;
 
+// State variables
+const on = true;
+const off = false;
+
 // Winning scores for each shot
-const scoreForShot = [10, 5, 3];
+const scoreForShot = [3, 10, 5, 3];
 
 // Data
 let runningHomeScore = 0;
@@ -21,7 +25,7 @@ let currentEndResult = {
   awayScore: 0,
   noOfHomeTouchers: 0,
   noOfAwayTouchers: 0,
-  winningSides: [noValue, noValue, noValue],
+  winningSides: [noValue, noValue, noValue, noValue],
 };
 
 let endResults = [];
@@ -81,7 +85,7 @@ for (let i = 0; i < sideBtns.length; i++) {
 // -- Navigation Buttons on Main Page --
 let nextBtn = document.querySelector("#next-end");
 // nextBtn.addEventListener("click", showResult);
-nextBtn.addEventListener("click", inputCheck); // working
+nextBtn.addEventListener("click", inputCheck);
 
 // -- Modal Sheet --
 let modalSheet = document.getElementById("modal");
@@ -100,8 +104,6 @@ closeModal.addEventListener("click", closeModalSheet);
 // When Document Object Model (DOM) loaded
 // ------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Document fully loaded and parsed");
-
   //
   // ----------------------------------------------
   // Check Local Storage for saved state
@@ -133,7 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Update Running Scores
-    console.table(endResults);
     runningHomeScore = endResults.reduce(
       (sum, item) => (sum += item.homeScore),
       0
@@ -156,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const height = window.innerHeight;
   document.getElementById(
     "info"
-  ).innerHTML += `width: ${width}, height: ${height}`;
+  ).innerHTML += ` width: ${width}, height: ${height}`;
 });
 
 //
@@ -270,13 +271,19 @@ function toggleToucher() {
 // -------------------------------------------------------------------------
 function toggleSide() {
   // Locate the pressed side button in side buttons array
-  let sideBtnPressed = this;
-  let sideBtnIndex = Array.prototype.indexOf.call(sideBtns, sideBtnPressed);
+  const sideBtnPressed = this;
+  const sideBtnIndex = Array.prototype.indexOf.call(sideBtns, sideBtnPressed);
+
+  // Stop further process if the pressed side button is disabled
+  if (this.classList.contains("disabled")) {
+    return;
+  }
 
   // Figure out which row and which side button(home, tie, away) is pressed
   const rowPressed = Math.floor(sideBtnIndex / 3);
   const sideIndex = sideBtnIndex % 3;
-  let points = parseInt(sideBtnPressed.parentElement.dataset.points, 10);
+  // let points = parseInt(sideBtnPressed.parentElement.dataset.points, 10);
+  let points = scoreForShot[rowPressed];
 
   // If Side Button not found in array, Log error to console
   if (sideBtnIndex < 0) {
@@ -286,90 +293,210 @@ function toggleSide() {
 
   // Check if all side buttons is not preseed before this button is pressed
   if (currentEndResult.winningSides[rowPressed] === noValue) {
-    // toggle this button state and update score
-    sideBtnPressed.classList.toggle("side-btn_pressed");
+    // Update scores
     switch (sideIndex) {
-      case 0:
+      case home:
         currentEndResult.homeScore = currentEndResult.homeScore + points;
         break;
-      case 1:
-        currentEndResult.homeScore = currentEndResult.homeScore + points / 2;
-        currentEndResult.awayScore = currentEndResult.awayScore + points / 2;
+
+      case tie:
+        currentEndResult.homeScore = currentEndResult.homeScore + points;
+        currentEndResult.awayScore = currentEndResult.awayScore + points;
         break;
-      case 2:
+
+      case away:
         currentEndResult.awayScore = currentEndResult.awayScore + points;
     }
 
     // update winningSides flag
     currentEndResult.winningSides[rowPressed] = sideIndex;
 
+    //
+    // toggle this button state
+    sideBtnPressed.classList.toggle("side-btn_pressed");
+
+    // Disable side buttons for succeeding counting shot if tie button is pressed
+    if (sideIndex === tie && (rowPressed === 1 || rowPressed === 2)) {
+      toggleAllBtn(rowPressed + 1, off);
+    }
+
+    // Disable tie button for previous counting shot
+    if (rowPressed === 2 || rowPressed === 3) {
+      toggleTieBtn(rowPressed - 1, off);
+    }
+
+    //
     // Else, one of the side buttons is already pressed
   } else {
+    //
     // If this button is in 'pressed' state before it is pressed
     if (currentEndResult.winningSides[rowPressed] == sideIndex) {
-      // toggle this button state
-      sideBtnPressed.classList.toggle("side-btn_pressed");
-
       // Update Score
       switch (sideIndex) {
-        case 0:
+        case home:
           currentEndResult.homeScore = currentEndResult.homeScore - points;
           break;
-        case 1:
-          currentEndResult.homeScore = currentEndResult.homeScore - points / 2;
-          currentEndResult.awayScore = currentEndResult.awayScore - points / 2;
+
+        case tie:
+          currentEndResult.homeScore = currentEndResult.homeScore - points;
+          currentEndResult.awayScore = currentEndResult.awayScore - points;
           break;
-        case 2:
+
+        case away:
           currentEndResult.awayScore = currentEndResult.awayScore - points;
       }
 
       // update winningSides flag
       currentEndResult.winningSides[rowPressed] = -1;
 
-      // Else (Another side button is already pressed)
-    } else {
-      // toggle the 'pressed' button state
-      const pressedBtnIndex =
-        3 * rowPressed + currentEndResult.winningSides[rowPressed];
-      sideBtns[pressedBtnIndex].classList.toggle("side-btn_pressed");
-
       // toggle this button state
       sideBtnPressed.classList.toggle("side-btn_pressed");
 
+      // Re-enable side buttons for succeeding counting shot if tie button was 'pressed'
+      if (sideIndex === tie && (rowPressed === 1 || rowPressed === 2)) {
+        toggleAllBtn(rowPressed + 1, on);
+      }
+
+      // Re-enable tie button for previous counting shot, be aware that if 1st shot is
+      // tie, tie button for 2nd shot should stay disabled
+      if (rowPressed === 2 || rowPressed === 3) {
+        toggleTieBtn(rowPressed - 1, on);
+      }
+
+      //
+      // Else (Another side button is already pressed)
+    } else {
+      //
+      // Store the 'old' pressed button
+      const oldWinningSide = currentEndResult.winningSides[rowPressed];
+
       // Reset scores for the old winning side
-      switch (currentEndResult.winningSides[rowPressed]) {
-        case 0:
+      switch (oldWinningSide) {
+        case home:
           currentEndResult.homeScore = currentEndResult.homeScore - points;
           break;
-        case 1:
-          currentEndResult.homeScore = currentEndResult.homeScore - points / 2;
-          currentEndResult.awayScore = currentEndResult.awayScore - points / 2;
+        case tie:
+          currentEndResult.homeScore = currentEndResult.homeScore - points;
+          currentEndResult.awayScore = currentEndResult.awayScore - points;
           break;
-        case 2:
+        case away:
           currentEndResult.awayScore = currentEndResult.awayScore - points;
       }
 
       // Update scores for the new winning side
       switch (sideIndex) {
-        case 0:
+        case home:
           currentEndResult.homeScore = currentEndResult.homeScore + points;
           break;
-        case 1:
-          currentEndResult.awayScore = currentEndResult.awayScore + points / 2;
-          currentEndResult.homeScore = currentEndResult.homeScore + points / 2;
+        case tie:
+          currentEndResult.awayScore = currentEndResult.awayScore + points;
+          currentEndResult.homeScore = currentEndResult.homeScore + points;
           break;
-        case 2:
+        case away:
           currentEndResult.awayScore = currentEndResult.awayScore + points;
       }
 
       // update winningSides flag
       currentEndResult.winningSides[rowPressed] = sideIndex;
+
+      // toggle the original 'pressed' button state
+      const pressedBtnIndex = 3 * rowPressed + oldWinningSide;
+      sideBtns[pressedBtnIndex].classList.toggle("side-btn_pressed");
+
+      // If the orginal 'pressed' button is tie, re-enable side buttons accordingly
+      if (oldWinningSide === tie) {
+        if (rowPressed === 1 || rowPressed === 2) {
+          toggleAllBtn(rowPressed + 1, on);
+        }
+        if (rowPressed === 2 || rowPressed === 3) {
+          toggleTieBtn(rowPressed - 1, on);
+        }
+      }
+
+      // toggle 'this' button state
+      sideBtnPressed.classList.toggle("side-btn_pressed");
+
+      // Disable all buttons of following counting shot if 'this' button is tie button
+      if (sideIndex === tie && (rowPressed === 1 || rowPressed === 2)) {
+        toggleAllBtn(rowPressed + 1, off);
+      }
+
+      // Disable tie button for previous counting shot
+      if (rowPressed === 2 || rowPressed === 3) {
+        toggleTieBtn(rowPressed - 1, off);
+      }
     }
   }
 
   // Update State
   saveCurrentEnd();
   updateScreen();
+}
+
+//
+// ---------------------------------------------------------------------
+// Function: toggleAllBtn
+// Description: Enable / Disable all buttons for specific row. When turn
+//              2nd shot tie button back on, make sure 1st shot is not
+//              tie and 3rd shot is noValue
+// Parameters: row - target row of side buttons to toggle
+//             turnOn - true: remove .disable class / add .disable class
+// ---------------------------------------------------------------------
+function toggleAllBtn(row, turnOn) {
+  const startIndex = 3 * row;
+
+  // Enable the side button
+  if (turnOn) {
+    //
+    // Home or Away button, no need to check just turn them back on
+    sideBtns[startIndex].classList.remove("disabled");
+    sideBtns[startIndex + 2].classList.remove("disabled");
+
+    // When try to turn back on the tie button for 2nd shot, make sure 1st is not tie
+    // and 3rd shot is not input yet
+    console.log(row, currentEndResult.winningSides);
+    if (
+      row === 2 &&
+      (currentEndResult.winningSides[1] === tie ||
+        currentEndResult.winningSides[3] !== noValue)
+    ) {
+      return;
+    } else {
+      sideBtns[startIndex + 1].classList.remove("disabled");
+    }
+
+    // Disable the side button
+  } else {
+    sideBtns[startIndex].classList.add("disabled");
+    sideBtns[startIndex + 1].classList.add("disabled");
+    sideBtns[startIndex + 2].classList.add("disabled");
+  }
+}
+
+//
+// -----------------------------------------------------------------------
+// Function: toggleTieBtn
+// Description: Enable / Disable tie button for specific row
+// Parameters: row - target row of tie button to toggle
+//             turnOn - true: remove .disable class / add .disable class
+// -----------------------------------------------------------------------
+function toggleTieBtn(row, turnOn) {
+  const tieIndex = row * 3 + 1;
+  if (turnOn) {
+    // When try to turn back on the tie button for 2nd shot, make sure 1st is not tie
+    // and 3rd shot is not input yet
+    if (
+      row === 2 &&
+      (currentEndResult.winningSides[1] === tie ||
+        currentEndResult.winningSides[3] !== noValue)
+    ) {
+      return;
+    } else {
+      sideBtns[tieIndex].classList.remove("disabled");
+    }
+  } else {
+    sideBtns[tieIndex].classList.add("disabled");
+  }
 }
 
 //
@@ -450,71 +577,101 @@ function restoreBtnState() {
   }
 
   // Update state of Winning Sides buttons
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < currentEndResult.winningSides.length; i++) {
     if (currentEndResult.winningSides[i] !== noValue) {
+      // Press the selected button
       sideBtns[3 * i + currentEndResult.winningSides[i]].classList.add(
         "side-btn_pressed"
       );
+
+      // If it is 1st shot or 2nd shot is tied, disable buttons for succeeding
+      // counting shot
+      if (currentEndResult.winningSides[i] === tie && (i === 1 || i === 2)) {
+        toggleAllBtn(i + 1, off);
+      }
+
+      // if 2nd shot or 3rd shot already have a winning side, disable the
+      // tie button for preceding counting shot
+      if (
+        currentEndResult.winningSides[i] !== noValue &&
+        (i === 2 || i === 3)
+      ) {
+        toggleTieBtn(i - 1, off);
+      }
     }
   }
 }
 
 //
-// ------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Funtion: inputCheck
 // Description: Check whether all input is valid
-//              1. All shot are record the winning side,
+//              1. Winning sides of all shot are recorded,
 //                 either home, tie or away button is pressed
-//              2. When one of the tie button is pressed,
-//                 there are only 3 scenarios:
-//                 1st shot and 2nd shot tie;
-//                 2nd shot and 3rd shot tie;
-//                 1st shot 2nd shot and 3rd shot all tie;
-// ------------------------------------------------------------
+//              2. When shots are tied, there are only 4 scenarios:
+//                 - 1st shot and 2nd shot tie, both side get 10 points and
+//                   2nd shot not counting;
+//                 - 2nd shot and 3rd shot tie, both side get 5 points and 3rd
+//                   not counting;
+//                 - 3rd shot and 4th shot tie, both side get 3 points;
+//                 - 1st shot 2nd shot and 3rd shot all tie, the side have 2;
+//                   counting get 13 points and the other side get 10 points;
+// -----------------------------------------------------------------------------
 function inputCheck() {
-  // If there is any no value in winning sides array, that means one of
-  // winning shot is not selected yet
+  //
+  // initialize flag
+  let inputIsValid = true;
+
+  // If there is any 'no value' in winning sides array, that means
+  // one of the winning shots is not selected yet
   if (currentEndResult.winningSides.includes(-1)) {
-    // Check which one is not selected and show warning sign
+    //
+    // Check which one is not selected while the preceding counting shot
+    // is not a tie, then show warning sign
     for (let i = 0; i < currentEndResult.winningSides.length; i++) {
-      if (currentEndResult.winningSides[i] === -1) {
+      if (
+        currentEndResult.winningSides[i] === noValue &&
+        currentEndResult.winningSides[i - 1] !== tie
+      ) {
         shotLabels[i].classList.add("warning");
+        inputIsValid = false;
       } else {
         shotLabels[i].classList.remove("warning");
       }
     }
-
-    // Break the checking
-    return;
-  } else {
+    //
     // All winning shots are selected
+  } else {
     Array.from(shotLabels).forEach((label) => {
       label.classList.remove("warning");
     });
   }
 
-  // If 1st shot is tie, then 2nd shot must be tie too
+  // Checking tie
+  // If 1st shot is tie, then 2nd shot must be 'No Value' too
   if (
-    currentEndResult.winningSides[0] === tie &&
-    currentEndResult.winningSides[1] !== tie
+    currentEndResult.winningSides[1] === tie &&
+    currentEndResult.winningSides[2] !== noValue
   ) {
-    shotLabels[0].classList.add("warning");
     shotLabels[1].classList.add("warning");
-    return;
+    shotLabels[2].classList.add("warning");
+    inputIsValid = false;
   }
 
-  // If 2nd shot is tie and 1st shot is not tie, then 3rd shot must be tie too
+  // If 2nd shot is tie and 3rd shot is not 'no Value'
   if (
-    currentEndResult.winningSides[0] !== tie &&
-    currentEndResult.winningSides[1] === tie &&
-    currentEndResult.winningSides[2] !== tie
+    currentEndResult.winningSides[2] === tie &&
+    currentEndResult.winningSides[3] !== noValue
   ) {
-    shotLabels[1].classList.add("warning");
-    return;
+    shotLabels[2].classList.add("warning");
+    shotLabels[3].classList.add("warning");
+    inputIsValid = false;
   }
 
   // Input is valid, show result
-  showResult();
+  if (inputIsValid) {
+    showResult();
+  }
 }
 
 //
@@ -548,22 +705,22 @@ function showResult() {
   let shotScores = [];
   for (let i = 0; i < currentEndResult.winningSides.length; i++) {
     switch (currentEndResult.winningSides[i]) {
-      case -1:
+      case noValue:
         shotScores[2 * i] = 0;
         shotScores[2 * i + 1] = 0;
         break;
-      case 0:
+      case home:
         shotScores[2 * i] = scoreForShot[i];
         shotScores[2 * i + 1] = 0;
         homeScoreTotal = homeScoreTotal + scoreForShot[i];
         break;
-      case 1:
-        shotScores[2 * i] = scoreForShot[i] / 2;
-        shotScores[2 * i + 1] = scoreForShot[i] / 2;
-        homeScoreTotal = homeScoreTotal + scoreForShot[i] / 2;
-        awayScoreTotal = awayScoreTotal + scoreForShot[i] / 2;
+      case tie:
+        shotScores[2 * i] = scoreForShot[i];
+        shotScores[2 * i + 1] = scoreForShot[i];
+        homeScoreTotal = homeScoreTotal + scoreForShot[i];
+        awayScoreTotal = awayScoreTotal + scoreForShot[i];
         break;
-      case 2:
+      case away:
         shotScores[2 * i] = 0;
         shotScores[2 * i + 1] = scoreForShot[i];
         awayScoreTotal = awayScoreTotal + scoreForShot[i];
@@ -615,7 +772,7 @@ function confirmEnd() {
     currentEndResult.awayScore = 0;
     currentEndResult.noOfHomeTouchers = 0;
     currentEndResult.noOfAwayTouchers = 0;
-    currentEndResult.winningSides = [noValue, noValue, noValue];
+    currentEndResult.winningSides = [noValue, noValue, noValue, noValue];
     saveCurrentEnd();
 
     // Reset Button State
@@ -672,6 +829,7 @@ function resetBtnState() {
   // Reset Side Buttons
   for (let i = 0; i < sideBtns.length; i++) {
     sideBtns[i].classList.remove("side-btn_pressed");
+    sideBtns[i].classList.remove("disabled");
   }
 }
 

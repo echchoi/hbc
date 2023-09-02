@@ -2,8 +2,14 @@
 // Global Variables
 // ------------------------------
 
+// Sides
+const noValue = -1;
+const home = 0;
+const tie = 1;
+const away = 2;
+
 // Winning scores for each shot
-const shotScore = [10, 5, 3];
+const shotScore = [3, 10, 5, 3];
 
 //
 // -----------------------------------------------------
@@ -70,27 +76,6 @@ function getResult() {
       aggAwayScore += endResult.awayScore;
 
       // Construct End header
-      // const end = document.createElement("p");
-      // end.innerHTML = endResult.end.toString();
-      // main.appendChild(end);
-
-      // const homeScoreThisEnd = document.createElement("p");
-      // homeScoreThisEnd.innerHTML = endResult.homeScore.toString();
-      // main.appendChild(homeScoreThisEnd);
-
-      // const homeScoreAfterEnd = document.createElement("p");
-      // homeScoreAfterEnd.innerHTML = aggHomeScore.toString();
-      // main.appendChild(homeScoreAfterEnd);
-
-      // const awayScoreThisEnd = document.createElement("p");
-      // awayScoreThisEnd.innerHTML = endResult.awayScore.toString();
-      // main.appendChild(awayScoreThisEnd);
-
-      // const awayScoreAfterEnd = document.createElement("p");
-      // awayScoreAfterEnd.innerHTML = aggAwayScore.toString();
-      // main.appendChild(awayScoreAfterEnd);
-
-      // Working......
       let divRow = document.createElement("div");
       divRow.classList.add("end-row");
 
@@ -120,17 +105,19 @@ function getResult() {
       let winningShots = [];
       for (j = 0; j < endResult.winningSides.length; j++) {
         switch (endResult.winningSides[j]) {
+          case -1: // NoValue
+            winningShots[j] = [0, 0];
           case 0: // Home
             winningShots[j] = [shotScore[j], 0];
             break;
           case 1: // Tie
-            winningShots[j] = [shotScore[j] / 2, shotScore[j] / 2];
+            winningShots[j] = [shotScore[j], shotScore[j]];
             break;
           case 2: // Away
             winningShots[j] = [0, shotScore[j]];
             break;
           default: // Not suppose to happen
-            winningShots.push([0, 0]);
+            console.log("Someting goes wrong in the End Results array");
         }
       }
 
@@ -139,17 +126,20 @@ function getResult() {
       divDetails.classList.add("end-details");
       let detailContent = `
         <p class="score_160 home">${homeToucherScore.toString()}</p>
-        <p class="tag_small neutral">Touchers</p>
+        <p class="label_small neutral">Touchers</p>
         <p class="score_160 away">${awayToucherScore.toString()}</p>
         <p class="score_160 home">${winningShots[0][0].toString()}</p>
-        <p class="tag_small neutral">1st Shot</p>
+        <p class="label_small neutral">Lead Shot</p>
         <p class="score_160 away">${winningShots[0][1].toString()}</p>
         <p class="score_160 home">${winningShots[1][0].toString()}</p>
-        <p class="tag_small neutral">2nd Shot</p>
+        <p class="label_small neutral">1st Shot</p>
         <p class="score_160 away">${winningShots[1][1].toString()}</p>
         <p class="score_160 home">${winningShots[2][0].toString()}</p>
-        <p class="tag_small neutral">3rd Shot</p>
+        <p class="label_small neutral">2nd Shot</p>
         <p class="score_160 away">${winningShots[2][1].toString()}</p>
+        <p class="score_160 home">${winningShots[3][0].toString()}</p>
+        <p class="label_small neutral">3rd Shot</p>
+        <p class="score_160 away">${winningShots[3][1].toString()}</p>
       `;
       divDetails.innerHTML = detailContent;
       divRow.appendChild(divDetails);
