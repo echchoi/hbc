@@ -2,7 +2,7 @@
 A project designed for lawn bowl lovers
 
 ## CHANGE LOG
-
+---
 ### v0.6
 Add lead shot and change rules when tie occur.
 When there is a tie shots occur, it must be one of the following 4 scenarios:
@@ -13,19 +13,15 @@ When there is a tie shots occur, it must be one of the following 4 scenarios:
 ---
 ### v0.5
 First beta with full features
-
-###
+---
 ### v0.4
 Entry Validation and Final Summary Sheet  
-
-
+---
 ### v0.3
 Layout refined, main container in column-reverse flex box, prepare for ad-slot    
-
-
+---
 ### v0.2
 End Confirmation and local Storage supoort 
-
-
+---
 ### v0.1
 Score Entry Only                                                         
