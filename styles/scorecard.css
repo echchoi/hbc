@@ -2,7 +2,7 @@
 /* Local Variables                             */
 /*---------------------------------------------*/
 :root {
-  --ad-height: 15vh;
+  --ad-height: 100px;
 }
 
 /*---------------------------------------------*/
@@ -54,7 +54,6 @@
   width: 100%;
   height: var(--ad-height);
   background-color: gray;
-  outline: 1px solid red;
 }
 
 /* Glass */
