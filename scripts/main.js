@@ -95,6 +95,10 @@ let modalSheet = document.getElementById("modal");
 let confirmEndBtn = document.getElementById("confirm-end");
 confirmEndBtn.addEventListener("click", confirmEnd);
 
+// Finish Game Button
+let finishGameBtn = document.getElementById("finish-game");
+finishGameBtn.addEventListener("click", finishGame);
+
 // Back Button
 let closeModal = document.getElementById("close-modal");
 closeModal.addEventListener("click", closeModalSheet);
@@ -764,28 +768,50 @@ function confirmEnd() {
   runningHomeScore += currentEndResult.homeScore;
   runningAwayScore += currentEndResult.awayScore;
 
-  // If not finish 7 ends, prepare for next end
-  if (currentEndResult.end < 7) {
-    // Reset Current End Result
-    currentEndResult.end += 1;
-    currentEndResult.homeScore = 0;
-    currentEndResult.awayScore = 0;
-    currentEndResult.noOfHomeTouchers = 0;
-    currentEndResult.noOfAwayTouchers = 0;
-    currentEndResult.winningSides = [noValue, noValue, noValue, noValue];
-    saveCurrentEnd();
+  // Prepare for next end
+  //
+  // Reset Current End Result
+  currentEndResult.end += 1;
+  currentEndResult.homeScore = 0;
+  currentEndResult.awayScore = 0;
+  currentEndResult.noOfHomeTouchers = 0;
+  currentEndResult.noOfAwayTouchers = 0;
+  currentEndResult.winningSides = [noValue, noValue, noValue, noValue];
+  saveCurrentEnd();
 
-    // Reset Button State
-    resetBtnState();
+  // Reset Button State
+  resetBtnState();
 
-    // Hide Result Modal Sheet
-    closeModalSheet();
+  // Hide Result Modal Sheet
+  closeModalSheet();
 
-    // Game finshed, show Final Scores Sheet and clean-up
-  } else {
-    gameWrapUp();
-  }
+  // Game finshed, show Final Scores Sheet and clean-up
 }
+
+//
+// -------------------------------------------------------------------------------------
+// Funtion: finishGame
+// Description: Store End Result, show Game Summary
+// -------------------------------------------------------------------------------------
+function finishGame() {
+  //
+  // Store End Result
+  // NOTE: Beware that a deep clone of currentEndResult is pushed into endResults instead of
+  // the object itself. Otherwise, the reference of currentEndResult will be passed to endResults
+  // array instead, which will alter the value of endResults last entry with all changes made to
+  // currentEndResult
+  endResults.push(JSON.parse(JSON.stringify(currentEndResult)));
+  if (localStorage) {
+    localStorage.setItem("endResults", JSON.stringify(endResults));
+  }
+
+  // Update Running Scores
+  runningHomeScore += currentEndResult.homeScore;
+  runningAwayScore += currentEndResult.awayScore;
+
+  // Show Final Scores Sheet and clean-up
+  gameWrapUp();
+} // end of finishGame
 
 //
 // -----------------------------------------------------------------

@@ -3,6 +3,7 @@
 /*---------------------------------------------*/
 :root {
   /* Color Variables */
+  --color-background: rgb(1, 25, 9);
   --color-home: rgb(43, 96, 255);
   --color-away: rgb(255, 43, 43);
   --color-tie: rgb(156, 33, 156);
