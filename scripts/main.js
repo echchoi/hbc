@@ -934,7 +934,7 @@ function gameWrapUp() {
   scoreCardRow.addEventListener("click", goScoreCardPage);
 
   // Reset the Navigation bar to hold the 'Finish' button
-  let modalNavBarHTML = `<button id="finish-game" class="cta">Finsh</button>`;
+  let modalNavBarHTML = `<button id="finish-game" class="cta">Exit</button>`;
   let modalNavBar = document.getElementById("modal__nav-bar");
   modalNavBar.innerHTML = modalNavBarHTML;
   let finishBtn = document.getElementById("finish-game");
@@ -949,7 +949,7 @@ function gameWrapUp() {
 function gameOver() {
   //
   // Double confirm with user to end the game
-  const yes = window.confirm("Sure to finish Game? All scores will be erased");
+  const yes = window.confirm("Sure to exit the score board? All scores will be erased");
 
   // If confirmed, clear locage storage and return to home page
   if (yes) {
